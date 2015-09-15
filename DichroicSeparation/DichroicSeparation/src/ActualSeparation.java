@@ -35,7 +35,7 @@ public class ActualSeparation {
 				// store in variable
 			// function returns false if given intensity is not in files
 			int chunkCounter = 0;
-			for (int i = 0; i<5000;i++){
+			for (int i = 0; i<20;i++){
 				boolean falseCheck = fl1.loadWavelengthFile(baseFilename, path, i);
 				if (falseCheck) {
 					wavelengthChunk = fl1.getWavelengthChunk();
@@ -82,7 +82,7 @@ public class ActualSeparation {
 	
 	private boolean checkIfLeft(int wavelength){
 		boolean left = false;
-		double randNo = rnd.nextDouble();
+		double randNo = rnd.nextDouble()*100;
 		int waveIndex = dichroicWavelengths.indexOf(wavelength);
 		if (dichroicProbabilities.get(waveIndex) < randNo) {
 			left = true;
@@ -97,7 +97,7 @@ public class ActualSeparation {
 		double randNo = rnd.nextDouble();
 		int waveIndex = filterWavelengths.indexOf(wavelength);
 		
-		if (filterProbabilities.get(waveIndex) < randNo) {
+		if (filterProbabilities.get(waveIndex) > randNo) {
 			discarded = false;
 		} else {
 			discarded = true;
