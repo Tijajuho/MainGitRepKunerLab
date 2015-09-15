@@ -62,6 +62,7 @@ public class ActualSeparation {
 								}
 							}
 						}
+						
 						leftCounts.get(chunkCounter).add(leftCounter);
 						rightCounts.get(chunkCounter).add(rightCounter);
 					}
@@ -81,7 +82,7 @@ public class ActualSeparation {
 	
 	private boolean checkIfLeft(int wavelength){
 		boolean left = false;
-		double randNo = rnd.nextDouble() * 100;
+		double randNo = rnd.nextDouble();
 		int waveIndex = dichroicWavelengths.indexOf(wavelength);
 		if (dichroicProbabilities.get(waveIndex) < randNo) {
 			left = true;
@@ -93,7 +94,7 @@ public class ActualSeparation {
 	
 	private boolean checkIfDiscarded(int wavelength) {
 		boolean discarded = false;
-		double randNo = rnd.nextDouble() * 100;
+		double randNo = rnd.nextDouble();
 		int waveIndex = filterWavelengths.indexOf(wavelength);
 		
 		if (filterProbabilities.get(waveIndex) < randNo) {
@@ -104,3 +105,10 @@ public class ActualSeparation {
 		return discarded;
 	}
 }
+
+//public class ChunkProcessing implements Runnable {
+//	public ChunkProcessing(){
+//		
+//	}
+//	
+//}
