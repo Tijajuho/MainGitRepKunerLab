@@ -7,14 +7,14 @@ public class Main {
 	
 	public static void main(String[] args){
 		try {
-			FileLoading fl1 = new FileLoading();
-			fl1.loadDichroicMirror();
-			fl1.loadFilters();
-			ActualSeparation al1 = new ActualSeparation(fl1);
-			al1.distributePhotons("\\\\129.206.158.175\\FN-Praktikant\\Timm\\Alexa647\\Testlauf\\",
-									"_testlauf150903.txt");
-//			al1.distributePhotons("\\\\129.206.158.175\\FN-Praktikant\\Timm\\Alexa647\\2015-08-28Alexa647\\",
-//												"_2015-08-28_waveDistrosinBlinkingEvents_150818PhaloidinAlexa647MitochondriaCF680Messung2pt2.txt");
+			LoadedFileStorage lfs1 = new LoadedFileStorage();
+//			FileLoadingOptimized flo1 = new FileLoadingOptimized("_testlauf150903.txt","\\\\129.206.158.175\\FN-Praktikant\\Timm\\Alexa647\\Testlauf\\",lfs1);
+			FileLoadingOptimized flo1 = new FileLoadingOptimized("_2015-09-11_waveDistrosinBlinkingEvents_150908PaperAlexa647HistoDataEstimation.txt",
+																	"\\\\129.206.158.175\\FN-Praktikant\\Timm\\Alexa647\\2015-09-11Alexa647\\",lfs1);
+			flo1.loadDichroicMirror();
+			flo1.loadFilters();
+			ActualSeparation al1 = new ActualSeparation(flo1,lfs1);
+			al1.distributePhotons();
 		} catch(IOException e) {
 			System.err.println("Caught IOException: " + e.getMessage());
 		}
