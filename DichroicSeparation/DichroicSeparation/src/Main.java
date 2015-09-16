@@ -15,6 +15,7 @@ public class Main {
 			flo1.loadFilters();
 			ActualSeparation al1 = new ActualSeparation(flo1,lfs1);
 			al1.distributePhotons();
+
 		} catch(IOException e) {
 			System.err.println("Caught IOException: " + e.getMessage());
 		}

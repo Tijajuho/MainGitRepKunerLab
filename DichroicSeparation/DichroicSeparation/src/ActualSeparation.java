@@ -30,6 +30,7 @@ public class ActualSeparation {
 				// distribute into left and right according to probabilities (built in function?? like choice?)
 				// store in variable
 			// function returns false if given intensity is not in files
+
 			executor =  Executors.newFixedThreadPool(7);
 			boolean falseCheck = true;
 			Object lock = new Object();
@@ -44,6 +45,7 @@ public class ActualSeparation {
 				if (falseCheck == false) {
 					System.out.println("no file remaining");
 					break;
+
 				}
 				
 				Runnable t = new Thread(new ChunkProcessing(i, wavelengthChunk, flo1, lfs1, lock));
@@ -71,7 +73,6 @@ class ChunkProcessing implements Runnable {
 	//private ArrayList<ArrayList<ArrayList<Integer>>> rightChannel = new ArrayList<ArrayList<ArrayList<Integer>>>();
 	private int i;
 	private ArrayList<ArrayList<Integer>> wavelengthChunk = null;
-	private FileLoadingOptimized flo1 = null;
 	private LoadedFileStorage lfs1 = null;
 	private Object lock;
 	
@@ -81,7 +82,6 @@ class ChunkProcessing implements Runnable {
 			FileLoadingOptimized flo1, LoadedFileStorage lfs1, Object lock) {
 		this.i = i;
 		this.wavelengthChunk = wavelengthChunk;
-		this.flo1 = flo1;
 		this.lfs1 = lfs1;
 		this.lock = lock;
 	}
