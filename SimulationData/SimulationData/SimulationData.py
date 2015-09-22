@@ -42,59 +42,71 @@ class SimulationData(object):
         
         return k;
     
+    def distributeExponentially(self,k):
+        minIntensity = self.__intensities[0];
+        maxIntensity = 70000.;
+        allCounts = 1000000;
+        self.intens = np.arange(minIntensity,maxIntensity,1);
+#         self._intensDistro = np.round(1500*np.e**(k*self.intens)).astype(int);#with self-established histogram data: 9000, with paper-data: 500
+        exponDistro = (1*np.e**(k*self.intens))/np.sum(1*np.e**(k*self.intens));
+        
+        preDistro = np.random.choice(self.intens,allCounts,p = exponDistro).astype(int);
+        self._setDistros = np.sort(np.asarray(list(set(preDistro)) ));
+        self._intensDistro = np.zeros(len(self._setDistros));
+        for i,x in enumerate(self._setDistros):
+            self._intensDistro[i] = preDistro.tolist().count(x);
+            print str(i) + " of " + str(len(self._setDistros));
+        self._intensDistro = self._intensDistro.astype(int);
+        
     def createSimulationData(self):
         k = self.calculateK();
-        minIntensity = 500.;
-        maxIntensity = 70000.;
-        allCounts = 1000000.;
-        self.intens = np.arange(minIntensity,maxIntensity,1);
-        self._intensDistro = np.round(500*np.e**(k*self.intens)).astype(int);#with self-established histogram data: 9000, with paper-data: 500
-        #((allCounts*4)*expon.pdf(self.intens,scale=-1/k)).astype(int); #+np.round(3*np.random.rand(len(self.intens)))
         
-#         self.plotData();
+        self.distributeExponentially(k);
+#         test = 1*expon.pdf(self.intens,scale=-1/k)).astype(int); #+np.round(3*np.random.rand(len(self.intens)))
+        
         self.saveData();
+        self.plotData();
         self.constructEndDistroNoSaving();
         
         ######### ExponentialRandomVerteilung nachschauen
         
     def constructEndDistroNoSaving(self):
         self.endDistro = np.zeros(np.sum(self._intensDistro));
-        for i in range(len(self.intens)):
+        for i in range(len(self._setDistros)):
             for j in range(self._intensDistro[i]):
                 if i !=0:
-                    self.endDistro[np.sum(self._intensDistro[:i:])+j] = self.intens[i];
+                    self.endDistro[np.sum(self._intensDistro[:i:])+j] = self._setDistros[i];
                 else:
-                    self.endDistro[j] = self.intens[i];
+                    self.endDistro[j] = self._setDistros[i];
                     
     def saveData(self):
-        newFilename = self._path+str(date.today())+"ArtificialDataSet.txt"
+        newFilename = self._path+str(date.today())+"ArtificialDataSet_improved.txt"
         
         self.endDistro = np.zeros(np.sum(self._intensDistro));
         f = open(newFilename,'w');
         f.write("Based on %s;\n" % self._filename);
-        for i in range(len(self.intens)):
+        for i in range(len(self._setDistros)):
             for j in range(self._intensDistro[i]):
-                f.write("%s\n" % (self.intens[i]));
+                f.write("%s\n" % (self._setDistros[i]));
                 if i !=0:
-                    self.endDistro[np.sum(self._intensDistro[:i:])+j] = self.intens[i];
+                    self.endDistro[np.sum(self._intensDistro[:i:])+j] = self._setDistros[i];
                 else:
-                    self.endDistro[j] = self.intens[i];
+                    self.endDistro[j] = self._setDistros[i];
         
         f.close();
         
     def plotData(self): 
         fig1 = plt.figure();
         axID = fig1.add_subplot(1,1,1);
-        axID.plot(self.intens,np.flipud(np.sort(self._intensDistro)));
+        axID.plot(self._setDistros,np.flipud(np.sort(self._intensDistro)),'.');
         #axID.plot(self.endDistro,'r')
-        axID.text(0.9,0.5,str(np.sum(self._intensDistro)));#,horizontalalignment='left',verticalalignment='top');
+        axID.text(0.9,0.5,str(np.sum(self._intensDistro))); #,horizontalalignment='left',verticalalignment='top');
         fig1.show();
         a = 1;
         # print np.arange(minIntensity,maxIntensity,(maxIntensity-minIntensity)/allCounts);
 
-"""
+
 path = '\\\\129.206.158.175\\FN-Praktikant\\Timm\\Alexa647\\'
 # filename = "HistoDataIntensROUND_150818PhaloidinAlexa647MitochondriaCF680Messung2pt2.txt"
 filename = "HistoDataIntensROUND_150908PaperAlexa647HistoDataEstimation.txt"
 sd = SimulationData(path, filename,channel="nochannels");
-"""

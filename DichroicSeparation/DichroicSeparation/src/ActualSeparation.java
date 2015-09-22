@@ -48,7 +48,7 @@ public class ActualSeparation {
 
 				}
 				
-				Runnable t = new Thread(new ChunkProcessing(i, wavelengthChunk, flo1, lfs1, lock));
+				Runnable t = new Thread(new ChunkProcessing(i, wavelengthChunk, flo1, lfs1, lock, rnd));
 				executor.execute(t);
 			}
 			executor.shutdown();
@@ -75,15 +75,17 @@ class ChunkProcessing implements Runnable {
 	private ArrayList<ArrayList<Integer>> wavelengthChunk = null;
 	private LoadedFileStorage lfs1 = null;
 	private Object lock;
+	private Random rnd;
 	
 
 	
 	public ChunkProcessing(int i, ArrayList<ArrayList<Integer>> wavelengthChunk, 
-			FileLoadingOptimized flo1, LoadedFileStorage lfs1, Object lock) {
+			FileLoadingOptimized flo1, LoadedFileStorage lfs1, Object lock, Random rndVar) {
 		this.i = i;
 		this.wavelengthChunk = wavelengthChunk;
 		this.lfs1 = lfs1;
 		this.lock = lock;
+		this.rnd = rndVar;
 	}
 
 
@@ -117,6 +119,15 @@ class ChunkProcessing implements Runnable {
 				}
 			}
 			synchronized (lock) {
+				double intensStd = 47.7;
+				leftCounter = leftCounter+(int)(Math.round((rnd.nextGaussian()*intensStd))); // watch out, I guess this is not thread-proof
+				rightCounter = rightCounter+(int)(Math.round((rnd.nextGaussian()*intensStd)));
+				if (leftCounter <= 0) {
+					leftCounter = 0;
+				}
+				if (rightCounter <= 0) {
+					rightCounter = 0;
+				}
 				lfs1.getLeftCounts().get(i).add(leftCounter);
 				lfs1.getRightCounts().get(i).add(rightCounter);
 			}
