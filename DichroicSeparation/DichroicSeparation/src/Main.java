@@ -18,6 +18,8 @@ public class Main {
 
 		} catch(IOException e) {
 			System.err.println("Caught IOException: " + e.getMessage());
+		} catch(InterruptedException e2){
+			System.err.println("Caught InterruptedException: " + e2.getMessage());
 		}
 	}
 }

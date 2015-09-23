@@ -23,6 +23,7 @@ public class LoadedFileStorage {
 		if (currentFileNumber != fileNumber) {
 			currentFileNumber = fileNumber;
 			currentIntensity = 0;
+			intensCounter = -1;
 		}
 		if (currentIntensity != intensity) {
 			currentIntensity = intensity;
@@ -47,6 +48,11 @@ public class LoadedFileStorage {
 		wavelengthChunk = currentFile.get(intensNumber);
 		
 		return wavelengthChunk;
+	}
+	
+	public void resetCurrentFile(){
+		currentFile.removeAll(currentFile);
+		currentFile = new ArrayList<ArrayList<ArrayList<Integer>>>();
 	}
 	
 	public int getFileSize(){

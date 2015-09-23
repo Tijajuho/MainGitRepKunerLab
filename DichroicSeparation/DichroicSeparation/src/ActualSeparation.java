@@ -19,7 +19,7 @@ public class ActualSeparation {
 		this.lfs1 = lfs1;
 	}
 	
-	public void distributePhotons() throws IOException{
+	public void distributePhotons() throws IOException, InterruptedException{
 		try {
 			ArrayList<ArrayList<Integer>> wavelengthChunk = null;
 			// getWavelengths and Probabilities from dichroic mirror
@@ -34,13 +34,18 @@ public class ActualSeparation {
 			executor =  Executors.newFixedThreadPool(7);
 			boolean falseCheck = true;
 			Object lock = new Object();
+			int indiI = 0;
 			for (int i = 0; i<50000;i++){
 				if (lfs1.getFileSize() == 0) {
 					falseCheck = flo1.loadWavelengthFile();
 					flo1.setCurrentFileNumber(flo1.getCurrentFileNumber()+1);
-				} else if (i == lfs1.getFileSize()){
+				} else if (indiI == lfs1.getFileSize()){
+					Thread.sleep(5000+flo1.getCurrentFileNumber()*100);
+					System.out.println("Next file loading: " + flo1.getCurrentFileNumber()+flo1.getBaseFilename());
+					lfs1.resetCurrentFile();
 					falseCheck = flo1.loadWavelengthFile();
 					flo1.setCurrentFileNumber(flo1.getCurrentFileNumber()+1);
+					indiI = 0;
 				}
 				if (falseCheck == false) {
 					System.out.println("no file remaining");
@@ -48,8 +53,9 @@ public class ActualSeparation {
 
 				}
 				
-				Runnable t = new Thread(new ChunkProcessing(i, wavelengthChunk, flo1, lfs1, lock, rnd));
+				Runnable t = new Thread(new ChunkProcessing(i, indiI, wavelengthChunk, flo1, lfs1, lock, rnd));
 				executor.execute(t);
+				indiI++;
 			}
 			executor.shutdown();
 			try {
@@ -72,6 +78,7 @@ class ChunkProcessing implements Runnable {
 	//private ArrayList<ArrayList<ArrayList<Integer>>> leftChannel = new ArrayList<ArrayList<ArrayList<Integer>>>();
 	//private ArrayList<ArrayList<ArrayList<Integer>>> rightChannel = new ArrayList<ArrayList<ArrayList<Integer>>>();
 	private int i;
+	private int indiI;
 	private ArrayList<ArrayList<Integer>> wavelengthChunk = null;
 	private LoadedFileStorage lfs1 = null;
 	private Object lock;
@@ -79,13 +86,14 @@ class ChunkProcessing implements Runnable {
 	
 
 	
-	public ChunkProcessing(int i, ArrayList<ArrayList<Integer>> wavelengthChunk, 
+	public ChunkProcessing(int i, int indiI, ArrayList<ArrayList<Integer>> wavelengthChunk, 
 			FileLoadingOptimized flo1, LoadedFileStorage lfs1, Object lock, Random rndVar) {
 		this.i = i;
 		this.wavelengthChunk = wavelengthChunk;
 		this.lfs1 = lfs1;
 		this.lock = lock;
 		this.rnd = rndVar;
+		this.indiI = indiI;
 	}
 
 
@@ -95,7 +103,7 @@ class ChunkProcessing implements Runnable {
 		//leftChannel.add(new ArrayList<ArrayList<Integer>>());
 		//rightChannel.add(new ArrayList<ArrayList<Integer>>());
 		synchronized (lock) {
-			wavelengthChunk = lfs1.getWavelengthChunk(i);
+			wavelengthChunk = lfs1.getWavelengthChunk(indiI);
 			lfs1.getRightCounts().add(new ArrayList<Integer>());
 			lfs1.getLeftCounts().add(new ArrayList<Integer>());
 			lfs1.getIntensityList().add(wavelengthChunk.get(0).size());
