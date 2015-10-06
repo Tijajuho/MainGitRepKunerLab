@@ -1,6 +1,7 @@
 import numpy as np;
 import matplotlib.pyplot as plt;
 from datetime import date;
+import os;
 
 class SimulationData(object):
     """ 
@@ -43,7 +44,7 @@ class SimulationData(object):
         return k;
     
     def distributeExponentially(self,k):
-        minIntensity = self.__intensities[0];
+        minIntensity = self.__intensities[0]; #achtung?
         maxIntensity = 70000.;
         allCounts = 1000000;
         self.intens = np.arange(minIntensity,maxIntensity,1);
@@ -59,6 +60,9 @@ class SimulationData(object):
         self._intensDistro = self._intensDistro.astype(int);
         
     def createSimulationData(self):
+        if os.path.isfile(self._path+"2015-10-05ArtificialDataSet_improved.txt"):
+            self.loadExistingFile(self._path+"2015-10-05ArtificialDataSet_improved.txt");
+            return 0;
         k = self.calculateK();
         
         self.distributeExponentially(k);
@@ -104,9 +108,14 @@ class SimulationData(object):
         fig1.show();
         a = 1;
         # print np.arange(minIntensity,maxIntensity,(maxIntensity-minIntensity)/allCounts);
+        
+    def loadExistingFile(self,existingFile):
+        counter = 0;
+        self.endDistro = np.loadtxt(existingFile,skiprows=1);
+        
 
 
-path = '\\\\129.206.158.175\\FN-Praktikant\\Timm\\Alexa647\\'
-# filename = "HistoDataIntensROUND_150818PhaloidinAlexa647MitochondriaCF680Messung2pt2.txt"
-filename = "HistoDataIntensROUND_150908PaperAlexa647HistoDataEstimation.txt"
-sd = SimulationData(path, filename,channel="nochannels");
+# path = '\\\\129.206.158.175\\FN-Praktikant\\Timm\\Alexa647\\'
+# # filename = "HistoDataIntensROUND_150818PhaloidinAlexa647MitochondriaCF680Messung2pt2.txt"
+# filename = "HistoDataIntensROUND_150908PaperAlexa647HistoDataEstimation.txt"
+# sd = SimulationData(path, filename,channel="nochannels");

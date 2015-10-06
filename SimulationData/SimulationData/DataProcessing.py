@@ -45,7 +45,7 @@ class DataProcessing(object):
         
         counter = 0;      
         iCounter = 0;
-        chunkNumber = 50;
+        chunkNumber = 100;
         chunkSize = len(self.__simuData.endDistro)/chunkNumber;
         saveCounter = 0;
         parameterList = [0,chunkNumber,chunkSize,counter,iCounter];
@@ -163,4 +163,4 @@ path = '\\\\129.206.158.175\\FN-Praktikant\\Timm\\Alexa647\\'
 filename = "HistoDataIntensROUND_150908PaperAlexa647HistoDataEstimation.txt"
 rawDataFile = "Alexa647"
 
-dp = DataProcessing(path,filename,rawDataFile,channel="left");
+dp = DataProcessing(path,filename,rawDataFile,channel="nochannels");
